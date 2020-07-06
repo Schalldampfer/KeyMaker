@@ -11,6 +11,3 @@ _listBoxA = 7458;
 {
 	_index = lbAdd [_listBoxA, _x];
 } forEach ["Green Key ","Red Key ","Yellow Key ","Black Key ","Blue Key "];
-
-
-

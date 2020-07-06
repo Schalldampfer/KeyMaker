@@ -161,5 +161,5 @@ class KeyMakerLega {
 				onButtonClick =  "[(ctrlText 7454),(ctrlText 7455),(ctrlText 7456),(ctrlText 7457)] call fnc_createkey; ((ctrlParent (_this select 0)) closeDisplay 7459);";
 
 			};
-						};
+	};
 };

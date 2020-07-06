@@ -17,16 +17,15 @@ _box4 = ctrlText 7457;
 
 //Finding all the data about the key early for use in the whole script.//
 _keySelected = format["%1(%2%3%4%5)",_listboxA,_box1,_box2,_box3,_box4];
+format["Searching %1",_keySelected] call dayz_rollingMessages;
 _KeyClassname = _Keyselected call fnc_findkey;
 _isKeyOK = isClass (configFile >> "CfgWeapons" >> _KeyClassname);
 _keyId = getNumber (configFile >> "CfgWeapons" >> _keyClassname >> "keyid");
 
-
-
 _gotMoney = true;
 _hasKey = _KeyClassname in items Player;
 
-if(_haskey)exitwith{systemchat format ["You already have a %1.",_keySelected];};
+if(_haskey)exitwith{ format["You already have a %1.",_keySelected] call dayz_rollingMessages; };
 if (lega_KeySingleCurrency) then {
 	_PlayerCash = player getVariable [Z_moneyVariable,0];
 	_gotMoney = if(_PlayerCash < Lega_KeyCost) then {false} else {true};
@@ -38,56 +37,48 @@ if (lega_KeySingleCurrency) then {
 //exit early if not enough money
 if !(_gotMoney) exitWith {
 	if (lega_KeySingleCurrency) then {
-		systemChat format["You need %1 more to complete the Key",Lega_KeyCost - _playerCash];
+		format["You need %1 more to complete the Key",Lega_KeyCost - _playerCash] call dayz_rollingMessages;
 	} else {
-		systemChat format["You need %1 to complete the format", Lega_KeyCost];
+		format["You need %1 to complete the format", Lega_KeyCost] call dayz_rollingMessages;
 	};
 };
 
 
-
-
 //exit early if key does not exist in configs
-if !(_isKeyOK) exitWith {systemChat format ["Key %1 does not exist",_keySelected]};
+if (!(_isKeyOK) || _keyID == 1) exitWith { format["Key %1 does not exist",_keySelected] call dayz_rollingMessages; };
 
 _vehexists = false;
 
 {
 	_tID = parseNumber (_x getVariable ["CharacterID","0"]);
 	if (_tID == _keyID) exitWith {
-		systemChat format ["Vehicle found: %1",(typeOf _x)];
+		format["Vehicle found: %1",(typeOf _x)] call dayz_rollingMessages;
 		_VehExists = true;
 	};
 } forEach vehicles;
 
 if(Lega_Keydebug)then{
 	//degug showing Input and output.
-	systemChat format ["Input: %1  Output: %2 Veh:%3 Creating Key With output. ", _Keyselected,_KeyClassname,_VehExists];
+	format["Input: %1  Output: %2 Veh:%3 Creating Key With output. ", _Keyselected,_KeyClassname,_VehExists] call dayz_rollingMessages;
 };
 
 //Exit script early if vehicle does not exist
-if !(_VehExists) exitWith { systemChat format ["Vehicle for Key %1 - %2 does not exist.", _KeyClassname ,_keySelected]; };
+if !(_VehExists) exitWith { format["Vehicle for Key %1 does not exist. Stop making Key.",_keySelected] call dayz_rollingMessages; };
 
 _isOk = [player,_KeyClassname] call BIS_fnc_invAdd;
 
-//exit script early if not enough space		
-if !(_isOK) exitWith {systemchat format ["Key %1 Could not be added to toolbelt, not enough space.",_keySelected];};
+//exit script early if not enough space
+if !(_isOK) exitWith { format["Key %1 Could not be added to toolbelt, not enough space.",_keySelected] call dayz_rollingMessages; };
 
+[player,"cook",0,true] call dayz_zombieSpeak;
+player playActionnow "Medic";
 if (lega_KeySingleCurrency) then {
-	Player playActionnow "Medic";
-	Sleep 7;
 	player setVariable [Z_moneyVariable,_PlayerCash - Lega_KeyCost, true]; 
 } else {
-	Player playActionnow "Medic";
-	Sleep 7;
 	player removeMagazine Lega_KeyCost;
 };
-systemChat format ["Key Making Completed, please check your toolbelt, %1 Taken from Cash",Lega_KeyCost];
-	   
+format["Key Making Completed, please check your toolbelt, %1 Taken from Cash",Lega_KeyCost] call dayz_rollingMessages;
 
 if(Lega_Keydebug)then{
-	systemChat format ["%1...%2",_isOk,_isKeyOK];
- };
-
-	 
-	
+	format["%1...%2",_isOk,_isKeyOK] call dayz_rollingMessages;
+};

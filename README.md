@@ -12,40 +12,56 @@ To make a Mechanic that comes to you on the right click of as radio, and if you 
 
 
 //Installation Instructions.
+0, To make all jobs easier, you should be using either Notepad++ or Atom. they both have SEARCH functions to make things easier by CTRL+F 
 
 1, Extract the Custom Folder, into your root Directory so its in the same folder as your Init.sqf and Description.ext so it should be custom\Keymaker\Files here. 
 
 
 2,  Open Your Init.sqf, and right at the BOTTOM, put 
-
+```
 			execvm "custom\Keymaker\createkey_init.sqf";
-			
+```
 3, Defines, If you do not already have a defines, Copy the Scripts folder into the root of your directory. 
 scripts\defines\Defines.hpp
 Again if you dont already have them, include the below in your Description.ext.
-			
+```
 			#include "scripts\defines\defines.hpp"
-			
+```
+if you have Advanced alchemical Crafting, then you don't need it.
 
 4,Make sure to include the Keymaking Dialog to your description.
-			
+```
 			#include "custom\keymaker\keymaker.hpp"
-			
+```
 to the bottom of your description.ext
 
 5, open the file VariableEdits.sqf, and copy everything to somewhere near the top of your variables, under disableSerialization; and if you have single coins, under that too.
  
-6, copy what is in the fn_selfactions edit, to the verybottom of your fn_selfactions file. 
+6, find ```// All Traders``` in your fn_selfactions.sqf and add this code just before it
+```
+	//Lega KeyMaker
+	//Keymaker Addaction.
+	if(_typeOfCursorTarget in Key_Maker) then {
+		if (s_maker_dialog < 0) then {
+			s_maker_dialog = player addAction ["<img image='\z\addons\dayz_epoch\pictures\equip_key_CA_blue.paa' shadow='0'/><t color='#0066FF'>KeyMaker</t>","Custom\KeyMaker\Key_Dialog.sqf",_cursorTarget, 5, true, true, "",""];
+		};
+	}else{
+		player removeaction s_maker_dialog;
+		s_maker_dialog = -1;
+	};
+```
 
-7, If you want to stop the spam coming from unkown variable s_maker_dialog add    CTRL+ in your editor and search for dayz_resetSelfActions = {  paste it just below.
+7, search ```s_player_manageDoor = -1;``` near the bottom of your fn_selfactions file, and add this code just after it, before };
+```
+	//KeyMaker
+	player removeaction s_maker_dialog;
+	s_maker_dialog = -1;
+```
 
-
+8, Search for ```dayz_resetSelfActions = {``` in your variables.sqf and paste this just below.
+```
 						s_maker_dialog = -1;
-						
-						
-to the reset self actions part of your variables.sqf.
-
-8, To make all this easier, you should be using either Notepad++ or Atom. they both have SEARCH functions to make things easier by CTRL+F 
+```
 
 9. Configure the part at the top of your variable, and start the server.
 
